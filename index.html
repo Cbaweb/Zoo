@@ -365,6 +365,81 @@
     }
     .area-desc { font-size: 0.82rem; color: var(--mid); line-height: 1.7; }
 
+    /* ── AREA TESTIMONIAL POPUP ── */
+    .area-testimonial {
+      position: absolute;
+      inset: 0;
+      background: rgba(10,10,8,0.97);
+      border: 1px solid var(--gold);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .area-card:hover .area-testimonial {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    .area-testimonial-quote {
+      font-family: var(--serif);
+      font-size: 1rem;
+      font-style: italic;
+      line-height: 1.6;
+      color: var(--off-white);
+      margin-bottom: 1.25rem;
+      position: relative;
+      padding-left: 1rem;
+      border-left: 2px solid var(--gold);
+    }
+    .area-testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .area-testimonial-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold) 0%, #8a6f2e 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--serif);
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: var(--black);
+      flex-shrink: 0;
+    }
+    .area-testimonial-name {
+      font-family: var(--serif);
+      font-size: 0.95rem;
+      font-weight: 400;
+      color: var(--off-white);
+      line-height: 1.2;
+    }
+    .area-testimonial-role {
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-top: 0.15rem;
+    }
+    .area-testimonial-result {
+      margin-top: 1rem;
+      padding: 0.5rem 0.75rem;
+      background: rgba(201,168,76,0.1);
+      border-left: 2px solid var(--gold);
+      font-size: 0.72rem;
+      color: var(--gold-light);
+      letter-spacing: 0.03em;
+    }
+
     /* ── MEMBERS ── */
     .members { background: #0e0d0b; }
     .members-intro {
@@ -676,31 +751,115 @@
       <div class="area-num">01</div>
       <div class="area-title"><span data-es>Estrategia Empresarial</span><span data-en>Business Strategy</span></div>
       <div class="area-desc"><span data-es>Diseño y ejecución de estrategia corporativa, modelos de negocio, posicionamiento competitivo y decisiones de portafolio.</span><span data-en>Corporate strategy design and execution, business models, competitive positioning, and portfolio decisions.</span></div>
+      <div class="area-testimonial">
+        <div class="area-testimonial-quote">
+          <span data-es>"Nos ayudaron a redefinir nuestra estrategia de portafolio. En 8 meses duplicamos el margen operativo de nuestra unidad principal."</span>
+          <span data-en>"They helped us redefine our portfolio strategy. In 8 months we doubled the operating margin of our main unit."</span>
+        </div>
+        <div class="area-testimonial-author">
+          <div class="area-testimonial-avatar">MV</div>
+          <div>
+            <div class="area-testimonial-name">Martín Velasco</div>
+            <div class="area-testimonial-role">CEO · Grupo Altana · <span data-es>México</span><span data-en>Mexico</span></div>
+          </div>
+        </div>
+        <div class="area-testimonial-result"><span data-es>+102% margen operativo en 8 meses</span><span data-en>+102% operating margin in 8 months</span></div>
+      </div>
     </div>
     <div class="area-card">
       <div class="area-num">02</div>
       <div class="area-title"><span data-es>Finanzas y M&A</span><span data-en>Finance & M&A</span></div>
       <div class="area-desc"><span data-es>Estructuración financiera, levantamiento de capital, procesos de fusiones y adquisiciones, y gestión de inversionistas.</span><span data-en>Financial structuring, capital raising, M&A processes, and investor relations management.</span></div>
+      <div class="area-testimonial">
+        <div class="area-testimonial-quote">
+          <span data-es>"El asesor Zoo nos acompañó en todo el proceso de adquisición. Cerramos en 4 meses lo que estimábamos en un año."</span>
+          <span data-en>"The Zoo advisor guided us through the entire acquisition process. We closed in 4 months what we estimated would take a year."</span>
+        </div>
+        <div class="area-testimonial-author">
+          <div class="area-testimonial-avatar">LT</div>
+          <div>
+            <div class="area-testimonial-name">Luciana Torres</div>
+            <div class="area-testimonial-role">CFO · NovaPharma · Colombia</div>
+          </div>
+        </div>
+        <div class="area-testimonial-result"><span data-es>Adquisición de USD 45M cerrada en 4 meses</span><span data-en>USD 45M acquisition closed in 4 months</span></div>
+      </div>
     </div>
     <div class="area-card">
       <div class="area-num">03</div>
       <div class="area-title"><span data-es>Marketing y Crecimiento</span><span data-en>Marketing & Growth</span></div>
       <div class="area-desc"><span data-es>Estrategia de marca, expansión de mercado, adquisición de clientes y construcción de canales de venta escalables.</span><span data-en>Brand strategy, market expansion, customer acquisition, and building scalable sales channels.</span></div>
+      <div class="area-testimonial">
+        <div class="area-testimonial-quote">
+          <span data-es>"Rediseñamos nuestra estrategia de canales con un asesor que ya lo había hecho antes. Triplicamos leads en 6 meses."</span>
+          <span data-en>"We redesigned our channel strategy with an advisor who'd done it before. We tripled leads in 6 months."</span>
+        </div>
+        <div class="area-testimonial-author">
+          <div class="area-testimonial-avatar">DF</div>
+          <div>
+            <div class="area-testimonial-name">Diego Fuentes</div>
+            <div class="area-testimonial-role">CMO · Krea Digital · Chile</div>
+          </div>
+        </div>
+        <div class="area-testimonial-result"><span data-es>3x leads cualificados en 6 meses</span><span data-en>3x qualified leads in 6 months</span></div>
+      </div>
     </div>
     <div class="area-card">
       <div class="area-num">04</div>
       <div class="area-title"><span data-es>Tecnología e Innovación</span><span data-en>Technology & Innovation</span></div>
       <div class="area-desc"><span data-es>Transformación digital, adopción de IA, arquitectura tecnológica y gestión de product development.</span><span data-en>Digital transformation, AI adoption, technology architecture, and product development management.</span></div>
+      <div class="area-testimonial">
+        <div class="area-testimonial-quote">
+          <span data-es>"Implementamos IA en nuestro proceso de supply chain con guía de alguien que ya lo había escalado. Redujimos costos un 28%."</span>
+          <span data-en>"We implemented AI in our supply chain process with guidance from someone who'd already scaled it. We cut costs by 28%."</span>
+        </div>
+        <div class="area-testimonial-author">
+          <div class="area-testimonial-avatar">PS</div>
+          <div>
+            <div class="area-testimonial-name">Patricia Sánchez</div>
+            <div class="area-testimonial-role">CTO · LogiTrack · <span data-es>Argentina</span><span data-en>Argentina</span></div>
+          </div>
+        </div>
+        <div class="area-testimonial-result"><span data-es>-28% costos operativos con IA</span><span data-en>-28% operational costs with AI</span></div>
+      </div>
     </div>
     <div class="area-card">
       <div class="area-num">05</div>
       <div class="area-title"><span data-es>Recursos Humanos y Liderazgo</span><span data-en>HR & Leadership</span></div>
       <div class="area-desc"><span data-es>Cultura organizacional, atracción y retención de talento, desarrollo de liderazgo y gestión del cambio.</span><span data-en>Organizational culture, talent attraction and retention, leadership development, and change management.</span></div>
+      <div class="area-testimonial">
+        <div class="area-testimonial-quote">
+          <span data-es>"Redujimos la rotación de talento clave del 32% al 9% en un año con un plan diseñado junto al asesor."</span>
+          <span data-en>"We reduced key talent turnover from 32% to 9% in one year with a plan designed alongside the advisor."</span>
+        </div>
+        <div class="area-testimonial-author">
+          <div class="area-testimonial-avatar">RC</div>
+          <div>
+            <div class="area-testimonial-name">Ricardo Campos</div>
+            <div class="area-testimonial-role">CEO · Servired · <span data-es>España</span><span data-en>Spain</span></div>
+          </div>
+        </div>
+        <div class="area-testimonial-result"><span data-es>Rotación de talento: de 32% a 9%</span><span data-en>Talent turnover: from 32% to 9%</span></div>
+      </div>
     </div>
     <div class="area-card">
       <div class="area-num">06</div>
       <div class="area-title"><span data-es>Internacionalización</span><span data-en>Internationalization</span></div>
       <div class="area-desc"><span data-es>Estrategia de entrada a nuevos mercados, adaptación local, alianzas estratégicas y gestión cross-border.</span><span data-en>Market entry strategy, local adaptation, strategic alliances, and cross-border management.</span></div>
+      <div class="area-testimonial">
+        <div class="area-testimonial-quote">
+          <span data-es>"Entramos a España y Portugal en 5 meses con el acompañamiento de un asesor que ya tenía la red de contactos."</span>
+          <span data-en>"We entered Spain and Portugal in 5 months with an advisor who already had the contact network."</span>
+        </div>
+        <div class="area-testimonial-author">
+          <div class="area-testimonial-avatar">VH</div>
+          <div>
+            <div class="area-testimonial-name">Valentina Herrera</div>
+            <div class="area-testimonial-role">CEO · Nexo Foods · <span data-es>Perú</span><span data-en>Peru</span></div>
+          </div>
+        </div>
+        <div class="area-testimonial-result"><span data-es>2 mercados nuevos en 5 meses</span><span data-en>2 new markets in 5 months</span></div>
+      </div>
     </div>
   </div>
 </section>
