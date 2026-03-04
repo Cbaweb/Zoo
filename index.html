@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="es" data-lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zoo — CBA Board Advisory</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #0a0a08;
+      --off-white: #f5f3ee;
+      --warm-white: #faf8f4;
+      --gold: #c9a84c;
+      --gold-light: #e8d5a3;
+      --mid: #6b6860;
+      --border: rgba(201,168,76,0.2);
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --sans: 'DM Sans', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--off-white);
+      font-family: var(--sans);
+      font-weight: 300;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.4;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem 3rem;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.4s, background 0.4s;
+    }
+    nav.scrolled {
+      background: rgba(10,10,8,0.92);
+      backdrop-filter: blur(12px);
+      border-color: var(--border);
+    }
+    .nav-logo {
+      font-family: var(--serif);
+      font-size: 1.4rem;
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      color: var(--off-white);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--gold); }
+    .nav-right { display: flex; align-items: center; gap: 2.5rem; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--mid);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+
+    .lang-toggle {
+      display: flex;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .lang-btn {
+      padding: 0.3rem 0.7rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: none;
+      color: var(--mid);
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      font-family: var(--sans);
+    }
+    .lang-btn.active { background: var(--gold); color: var(--black); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 3rem 5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 70% 40%, rgba(201,168,76,0.08) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 20% 80%, rgba(201,168,76,0.04) 0%, transparent 60%);
+    }
+
+    .hero-line {
+      position: absolute;
+      top: 0; bottom: 0;
+      left: 55%;
+      width: 1px;
+      background: linear-gradient(to bottom, transparent, var(--border) 30%, var(--border) 70%, transparent);
+      opacity: 0.5;
+    }
+
+    .hero-eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.3s forwards;
+    }
+
+    .hero-title {
+      font-family: var(--serif);
+      font-size: clamp(4rem, 9vw, 9rem);
+      font-weight: 300;
+      line-height: 0.95;
+      letter-spacing: -0.01em;
+      max-width: 14ch;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.5s forwards;
+    }
+    .hero-title em {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    .hero-bottom {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-top: 3rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.8s forwards;
+    }
+    .hero-sub {
+      font-size: 1rem;
+      color: var(--mid);
+      max-width: 38ch;
+      line-height: 1.7;
+    }
+    .hero-cta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 1rem;
+    }
+    .btn-primary {
+      display: inline-block;
+      padding: 0.9rem 2.5rem;
+      background: var(--gold);
+      color: var(--black);
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-decoration: none;
+      font-family: var(--sans);
+      font-weight: 500;
+      transition: background 0.2s, transform 0.2s;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-primary:hover { background: var(--gold-light); transform: translateY(-1px); }
+    .btn-ghost {
+      display: inline-block;
+      padding: 0.9rem 2.5rem;
+      border: 1px solid var(--border);
+      color: var(--mid);
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-decoration: none;
+      font-family: var(--sans);
+      transition: border-color 0.2s, color 0.2s;
+      background: none;
+      cursor: pointer;
+    }
+    .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+
+    .scroll-indicator {
+      position: absolute;
+      bottom: 2rem; left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0;
+      animation: fadeIn 1s 1.5s forwards;
+    }
+    .scroll-indicator span {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--mid);
+    }
+    .scroll-line {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+
+    /* ── INTRO STRIP ── */
+    .intro-strip {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 1.5rem 3rem;
+      display: flex;
+      gap: 4rem;
+      overflow-x: auto;
+    }
+    .stat-item { flex-shrink: 0; }
+    .stat-number {
+      font-family: var(--serif);
+      font-size: 2.2rem;
+      font-weight: 300;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-top: 0.25rem;
+    }
+
+    /* ── SECTION COMMONS ── */
+    section { padding: 8rem 3rem; }
+    .section-tag {
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .section-tag::after {
+      content: '';
+      display: block;
+      width: 40px;
+      height: 1px;
+      background: var(--gold);
+      opacity: 0.5;
+    }
+    .section-title {
+      font-family: var(--serif);
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      font-weight: 300;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+    }
+    .section-title em { font-style: italic; color: var(--gold); }
+    .section-body {
+      font-size: 1rem;
+      color: var(--mid);
+      max-width: 50ch;
+      line-height: 1.8;
+    }
+
+    /* ── ABOUT ── */
+    .about { background: var(--warm-white); color: var(--black); }
+    .about .section-tag { color: var(--gold); }
+    .about .section-body { color: #5a5852; }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: center;
+    }
+    .about-visual {
+      position: relative;
+      height: 400px;
+    }
+    .about-card {
+      position: absolute;
+      background: var(--black);
+      color: var(--off-white);
+      padding: 2.5rem;
+      border: 1px solid var(--border);
+    }
+    .about-card:first-child { top: 0; left: 0; right: 4rem; }
+    .about-card:last-child { bottom: 0; left: 4rem; right: 0; top: auto; background: var(--gold); color: var(--black); border-color: transparent; }
+    .about-card-title {
+      font-family: var(--serif);
+      font-size: 1.3rem;
+      font-weight: 300;
+      margin-bottom: 0.75rem;
+    }
+    .about-card-body { font-size: 0.85rem; line-height: 1.7; opacity: 0.8; }
+
+    /* ── AREAS ── */
+    .areas-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      margin-top: 4rem;
+      border: 1px solid var(--border);
+    }
+    .area-card {
+      background: var(--black);
+      padding: 2.5rem;
+      transition: background 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .area-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(201,168,76,0.06), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .area-card:hover::before { opacity: 1; }
+    .area-num {
+      font-family: var(--serif);
+      font-size: 3rem;
+      font-weight: 300;
+      color: var(--border);
+      line-height: 1;
+      margin-bottom: 1.5rem;
+      transition: color 0.3s;
+    }
+    .area-card:hover .area-num { color: var(--gold); }
+    .area-title {
+      font-family: var(--serif);
+      font-size: 1.3rem;
+      font-weight: 300;
+      margin-bottom: 0.75rem;
+    }
+    .area-desc { font-size: 0.82rem; color: var(--mid); line-height: 1.7; }
+
+    /* ── MEMBERS ── */
+    .members { background: #0e0d0b; }
+    .members-intro {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      margin-bottom: 5rem;
+      align-items: end;
+    }
+    .members-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    .member-card {
+      border: 1px solid var(--border);
+      padding: 2rem;
+      position: relative;
+      transition: border-color 0.3s;
+    }
+    .member-card:hover { border-color: var(--gold); }
+    .member-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold) 0%, #8a6f2e 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--serif);
+      font-size: 1.4rem;
+      color: var(--black);
+      margin-bottom: 1.25rem;
+    }
+    .member-name {
+      font-family: var(--serif);
+      font-size: 1.2rem;
+      font-weight: 300;
+      margin-bottom: 0.2rem;
+    }
+    .member-role { font-size: 0.72rem; letter-spacing: 0.1em; color: var(--gold); text-transform: uppercase; margin-bottom: 1rem; }
+    .member-bio { font-size: 0.82rem; color: var(--mid); line-height: 1.6; margin-bottom: 1.25rem; }
+    .member-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .tag {
+      font-size: 0.62rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border: 1px solid var(--border);
+      padding: 0.2rem 0.6rem;
+      color: var(--mid);
+    }
+
+    /* ── PROCESS ── */
+    .process { background: var(--warm-white); color: var(--black); }
+    .process .section-body { color: #5a5852; }
+    .process-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
+      margin-top: 4rem;
+    }
+    .step {
+      position: relative;
+      padding-top: 1.5rem;
+      border-top: 2px solid #e0ddd6;
+      transition: border-color 0.3s;
+    }
+    .step:hover { border-color: var(--gold); }
+    .step-num {
+      font-family: var(--serif);
+      font-size: 3.5rem;
+      font-weight: 300;
+      color: #d8d4cb;
+      line-height: 1;
+      margin-bottom: 1rem;
+    }
+    .step-title {
+      font-family: var(--serif);
+      font-size: 1.1rem;
+      font-weight: 400;
+      margin-bottom: 0.6rem;
+      color: var(--black);
+    }
+    .step-desc { font-size: 0.82rem; color: #7a776f; line-height: 1.7; }
+
+    /* ── CONTACT ── */
+    .contact {
+      background: var(--black);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: start;
+    }
+    .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+    .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+    .form-label { font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--mid); }
+    .form-input, .form-select, .form-textarea {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      color: var(--off-white);
+      padding: 0.85rem 1rem;
+      font-family: var(--sans);
+      font-size: 0.9rem;
+      font-weight: 300;
+      outline: none;
+      transition: border-color 0.2s;
+      width: 100%;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--gold); }
+    .form-select { appearance: none; cursor: pointer; }
+    .form-textarea { min-height: 120px; resize: vertical; }
+    .form-select option { background: var(--black); }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .footer-logo {
+      font-family: var(--serif);
+      font-size: 1rem;
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      color: var(--mid);
+    }
+    .footer-logo span { color: var(--gold); }
+    .footer-copy { font-size: 0.7rem; color: var(--mid); letter-spacing: 0.05em; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes scrollPulse {
+      0%, 100% { transform: scaleY(1); opacity: 1; }
+      50% { transform: scaleY(0.6); opacity: 0.4; }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 1.2rem 1.5rem; }
+      .nav-links { display: none; }
+      .hero { padding: 0 1.5rem 4rem; }
+      .hero-bottom { flex-direction: column; align-items: flex-start; gap: 2rem; }
+      .hero-cta { align-items: flex-start; flex-direction: row; }
+      section { padding: 5rem 1.5rem; }
+      .about-grid, .members-intro, .contact { grid-template-columns: 1fr; gap: 3rem; }
+      .about-visual { height: 280px; }
+      .areas-grid, .members-grid { grid-template-columns: 1fr; }
+      .process-steps { grid-template-columns: 1fr 1fr; }
+      footer { flex-direction: column; gap: 0.75rem; text-align: center; }
+      .intro-strip { padding: 1.5rem; gap: 2.5rem; }
+    }
+
+    /* ── I18N ── */
+    [data-es], [data-en] { display: none; }
+    [data-lang="es"] [data-es] { display: block; }
+    [data-lang="en"] [data-en] { display: block; }
+    [data-lang="es"] span[data-es], [data-lang="en"] span[data-en] { display: inline; }
+
+    /* inline i18n for mixed elements */
+    .i18n-inline [data-es], .i18n-inline [data-en] { display: inline; }
+    [data-lang="es"] .i18n-inline [data-en] { display: none; }
+    [data-lang="en"] .i18n-inline [data-es] { display: none; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">Zoo <span>·</span> CBA Board</a>
+  <div class="nav-right">
+    <ul class="nav-links">
+      <li><a href="#about"><span data-es>Concepto</span><span data-en>About</span></a></li>
+      <li><a href="#areas"><span data-es>Áreas</span><span data-en>Areas</span></a></li>
+      <li><a href="#members"><span data-es>Asesores</span><span data-en>Advisors</span></a></li>
+      <li><a href="#contact"><span data-es>Contacto</span><span data-en>Contact</span></a></li>
+    </ul>
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('es')">ES</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-line"></div>
+
+  <p class="hero-eyebrow">
+    <span data-es>CBA Board Advisory Network</span>
+    <span data-en>CBA Board Advisory Network</span>
+  </p>
+
+  <h1 class="hero-title">
+    <span data-es>El advisory <em>que tu empresa</em> necesita</span>
+    <span data-en>The advisory <em>your company</em> needs</span>
+  </h1>
+
+  <div class="hero-bottom">
+    <p class="hero-sub">
+      <span data-es>CEOs y ejecutivos senior de Iberoamérica con experiencia real, disponibles para acompañar tu empresa en sus decisiones más críticas.</span>
+      <span data-en>Senior CEOs and executives from Ibero-America with real-world experience, available to support your company's most critical decisions.</span>
+    </p>
+    <div class="hero-cta">
+      <a href="#contact" class="btn-primary">
+        <span data-es>Hablar con un asesor</span>
+        <span data-en>Talk to an advisor</span>
+      </a>
+      <a href="#members" class="btn-ghost">
+        <span data-es>Ver asesores</span>
+        <span data-en>Browse advisors</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="scroll-indicator">
+    <div class="scroll-line"></div>
+    <span><span data-es>Explorar</span><span data-en>Explore</span></span>
+  </div>
+</section>
+
+<!-- STATS STRIP -->
+<div class="intro-strip">
+  <div class="stat-item">
+    <div class="stat-number">10+</div>
+    <div class="stat-label"><span data-es>Países</span><span data-en>Countries</span></div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-number">200+</div>
+    <div class="stat-label"><span data-es>CEOs en la red</span><span data-en>CEOs in the network</span></div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-number">6</div>
+    <div class="stat-label"><span data-es>Áreas de expertise</span><span data-en>Areas of expertise</span></div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-number">15+</div>
+    <div class="stat-label"><span data-es>Años de experiencia promedio</span><span data-en>Avg. years of experience</span></div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="about-grid">
+    <div>
+      <div class="section-tag"><span data-es>El concepto</span><span data-en>The concept</span></div>
+      <h2 class="section-title">
+        <span data-es>Advisory de <em>pares</em>, no de consultores</span>
+        <span data-en>Peer advisory, <em>not</em> consultants</span>
+      </h2>
+      <p class="section-body">
+        <span data-es>Zoo es la red de advisory ejecutivo de CBA Board. Nuestros asesores no son consultores externos: son CEOs y líderes senior que han operado empresas reales, tomado decisiones difíciles y generado resultados medibles en mercados como el tuyo.</span>
+        <span data-en>Zoo is CBA Board's executive advisory network. Our advisors aren't external consultants — they are CEOs and senior leaders who have operated real companies, made hard calls, and delivered measurable results in markets like yours.</span>
+      </p>
+      <br>
+      <p class="section-body">
+        <span data-es>Conectamos empresas con el asesor correcto. Sin estructuras rígidas, sin presentaciones genéricas. Experiencia directa aplicada a tu contexto.</span>
+        <span data-en>We connect companies with the right advisor. No rigid structures, no generic presentations. Direct experience applied to your specific context.</span>
+      </p>
+    </div>
+    <div class="about-visual">
+      <div class="about-card">
+        <div class="about-card-title">
+          <span data-es>Iberoamérica como ventaja competitiva</span>
+          <span data-en>Ibero-America as a competitive advantage</span>
+        </div>
+        <div class="about-card-body">
+          <span data-es>Nuestros asesores conocen los mercados, las regulaciones y las redes de contacto de la región desde adentro.</span>
+          <span data-en>Our advisors know the markets, regulations, and networks of the region from the inside.</span>
+        </div>
+      </div>
+      <div class="about-card">
+        <div class="about-card-title">
+          <span data-es>Resultados, no horas</span>
+          <span data-en>Results, not hours</span>
+        </div>
+        <div class="about-card-body">
+          <span data-es>Engagement enfocado en impacto real para tu empresa, no en llenar informes.</span>
+          <span data-en>Engagement focused on real impact for your company, not on filling reports.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AREAS -->
+<section id="areas">
+  <div class="section-tag"><span data-es>Expertise</span><span data-en>Expertise</span></div>
+  <h2 class="section-title">
+    <span data-es>Áreas de <em>advisory</em></span>
+    <span data-en>Advisory <em>areas</em></span>
+  </h2>
+  <p class="section-body">
+    <span data-es>Nuestros asesores cubren las dimensiones más críticas de la gestión ejecutiva y el crecimiento empresarial.</span>
+    <span data-en>Our advisors cover the most critical dimensions of executive management and business growth.</span>
+  </p>
+
+  <div class="areas-grid">
+    <div class="area-card">
+      <div class="area-num">01</div>
+      <div class="area-title"><span data-es>Estrategia Empresarial</span><span data-en>Business Strategy</span></div>
+      <div class="area-desc"><span data-es>Diseño y ejecución de estrategia corporativa, modelos de negocio, posicionamiento competitivo y decisiones de portafolio.</span><span data-en>Corporate strategy design and execution, business models, competitive positioning, and portfolio decisions.</span></div>
+    </div>
+    <div class="area-card">
+      <div class="area-num">02</div>
+      <div class="area-title"><span data-es>Finanzas y M&A</span><span data-en>Finance & M&A</span></div>
+      <div class="area-desc"><span data-es>Estructuración financiera, levantamiento de capital, procesos de fusiones y adquisiciones, y gestión de inversionistas.</span><span data-en>Financial structuring, capital raising, M&A processes, and investor relations management.</span></div>
+    </div>
+    <div class="area-card">
+      <div class="area-num">03</div>
+      <div class="area-title"><span data-es>Marketing y Crecimiento</span><span data-en>Marketing & Growth</span></div>
+      <div class="area-desc"><span data-es>Estrategia de marca, expansión de mercado, adquisición de clientes y construcción de canales de venta escalables.</span><span data-en>Brand strategy, market expansion, customer acquisition, and building scalable sales channels.</span></div>
+    </div>
+    <div class="area-card">
+      <div class="area-num">04</div>
+      <div class="area-title"><span data-es>Tecnología e Innovación</span><span data-en>Technology & Innovation</span></div>
+      <div class="area-desc"><span data-es>Transformación digital, adopción de IA, arquitectura tecnológica y gestión de product development.</span><span data-en>Digital transformation, AI adoption, technology architecture, and product development management.</span></div>
+    </div>
+    <div class="area-card">
+      <div class="area-num">05</div>
+      <div class="area-title"><span data-es>Recursos Humanos y Liderazgo</span><span data-en>HR & Leadership</span></div>
+      <div class="area-desc"><span data-es>Cultura organizacional, atracción y retención de talento, desarrollo de liderazgo y gestión del cambio.</span><span data-en>Organizational culture, talent attraction and retention, leadership development, and change management.</span></div>
+    </div>
+    <div class="area-card">
+      <div class="area-num">06</div>
+      <div class="area-title"><span data-es>Internacionalización</span><span data-en>Internationalization</span></div>
+      <div class="area-desc"><span data-es>Estrategia de entrada a nuevos mercados, adaptación local, alianzas estratégicas y gestión cross-border.</span><span data-en>Market entry strategy, local adaptation, strategic alliances, and cross-border management.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- MEMBERS -->
+<section class="members" id="members">
+  <div class="members-intro">
+    <div>
+      <div class="section-tag"><span data-es>La red</span><span data-en>The network</span></div>
+      <h2 class="section-title">
+        <span data-es>Asesores <em>Zoo</em></span>
+        <span data-en><em>Zoo</em> Advisors</span>
+      </h2>
+    </div>
+    <p class="section-body">
+      <span data-es>Cada asesor es un miembro activo de CBA Board con trayectoria comprobada en sus industrias. No teóricos — ejecutivos que han estado donde tú estás.</span>
+      <span data-en>Each advisor is an active CBA Board member with a proven track record in their industries. Not theorists — executives who've been where you are.</span>
+    </p>
+  </div>
+
+  <div class="members-grid">
+    <div class="member-card">
+      <div class="member-avatar">AG</div>
+      <div class="member-name">Ana García</div>
+      <div class="member-role"><span data-es>Estrategia · M&A</span><span data-en>Strategy · M&A</span></div>
+      <div class="member-bio"><span data-es>Ex-CEO de grupo industrial con operaciones en 5 países. Lideró 3 procesos de M&A por encima de USD 200M.</span><span data-en>Ex-CEO of an industrial group with operations in 5 countries. Led 3 M&A processes above USD 200M.</span></div>
+      <div class="member-tags">
+        <span class="tag"><span data-es>Manufactura</span><span data-en>Manufacturing</span></span>
+        <span class="tag"><span data-es>LATAM</span><span data-en>LATAM</span></span>
+        <span class="tag">M&A</span>
+      </div>
+    </div>
+
+    <div class="member-card">
+      <div class="member-avatar">RM</div>
+      <div class="member-name">Roberto Martínez</div>
+      <div class="member-role"><span data-es>Tecnología · Transformación</span><span data-en>Tech · Transformation</span></div>
+      <div class="member-bio"><span data-es>Fundador de dos startups tecnológicas, una de ellas adquirida por empresa Fortune 500. 20 años en Silicon Valley y LATAM.</span><span data-en>Founded two tech startups, one acquired by a Fortune 500. 20 years across Silicon Valley and LATAM.</span></div>
+      <div class="member-tags">
+        <span class="tag">SaaS</span>
+        <span class="tag"><span data-es>Startups</span><span data-en>Startups</span></span>
+        <span class="tag">AI</span>
+      </div>
+    </div>
+
+    <div class="member-card">
+      <div class="member-avatar">CS</div>
+      <div class="member-name">Carolina Silva</div>
+      <div class="member-role"><span data-es>Finanzas · Inversionistas</span><span data-en>Finance · Investors</span></div>
+      <div class="member-bio"><span data-es>CFO de grupo retailer con USD 800M en ventas. Especialista en estructuración financiera y relación con fondos de PE.</span><span data-en>CFO of retail group with USD 800M in sales. Specialist in financial structuring and PE fund relations.</span></div>
+      <div class="member-tags">
+        <span class="tag">Retail</span>
+        <span class="tag">CFO</span>
+        <span class="tag"><span data-es>Capital</span><span data-en>Capital</span></span>
+      </div>
+    </div>
+
+    <div class="member-card">
+      <div class="member-avatar">JP</div>
+      <div class="member-name">Jorge Pereira</div>
+      <div class="member-role"><span data-es>Marketing · Crecimiento</span><span data-en>Marketing · Growth</span></div>
+      <div class="member-bio"><span data-es>Ex CMO de empresa de consumo masivo. Escaló marca regional a presencia en 8 países en 4 años.</span><span data-en>Ex CMO of consumer goods company. Scaled a regional brand to presence in 8 countries in 4 years.</span></div>
+      <div class="member-tags">
+        <span class="tag">FMCG</span>
+        <span class="tag">Brand</span>
+        <span class="tag">Growth</span>
+      </div>
+    </div>
+
+    <div class="member-card">
+      <div class="member-avatar">MR</div>
+      <div class="member-name">María Rodríguez</div>
+      <div class="member-role"><span data-es>RRHH · Cultura</span><span data-en>HR · Culture</span></div>
+      <div class="member-bio"><span data-es>CHRO de empresa de servicios con 4.000 colaboradores. Especialista en transformación cultural y liderazgo en contextos de alto crecimiento.</span><span data-en>CHRO of services company with 4,000 employees. Specialist in cultural transformation and leadership in high-growth contexts.</span></div>
+      <div class="member-tags">
+        <span class="tag"><span data-es>Cultura</span><span data-en>Culture</span></span>
+        <span class="tag">CHRO</span>
+        <span class="tag">Talent</span>
+      </div>
+    </div>
+
+    <div class="member-card">
+      <div class="member-avatar">AL</div>
+      <div class="member-name">Alejandro López</div>
+      <div class="member-role"><span data-es>Internacional · Estrategia</span><span data-en>International · Strategy</span></div>
+      <div class="member-bio"><span data-es>Internacionalización de empresas latinoamericanas hacia Europa e Iberia. Ex Country Manager en España y Portugal.</span><span data-en>Internationalization of Latin American companies into Europe and Iberia. Ex Country Manager in Spain and Portugal.</span></div>
+      <div class="member-tags">
+        <span class="tag">Iberia</span>
+        <span class="tag">LATAM</span>
+        <span class="tag"><span data-es>Expansión</span><span data-en>Expansion</span></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process" id="process">
+  <div class="section-tag"><span data-es>Cómo funciona</span><span data-en>How it works</span></div>
+  <h2 class="section-title">
+    <span data-es>Proceso <em>simple</em> y directo</span>
+    <span data-en>Simple and <em>direct</em> process</span>
+  </h2>
+  <p class="section-body">
+    <span data-es>Del primer contacto a la primera sesión en menos de una semana.</span>
+    <span data-en>From first contact to first session in less than a week.</span>
+  </p>
+
+  <div class="process-steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-title"><span data-es>Cuéntanos tu desafío</span><span data-en>Tell us your challenge</span></div>
+      <div class="step-desc"><span data-es>Completa el formulario con contexto sobre tu empresa y el tipo de advisory que necesitas.</span><span data-en>Fill out the form with context about your company and the type of advisory you need.</span></div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-title"><span data-es>Match con el asesor</span><span data-en>Advisor match</span></div>
+      <div class="step-desc"><span data-es>Nuestro equipo identifica al asesor Zoo con mejor fit para tu industria y desafío.</span><span data-en>Our team identifies the Zoo advisor with the best fit for your industry and challenge.</span></div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-title"><span data-es>Sesión inicial</span><span data-en>Initial session</span></div>
+      <div class="step-desc"><span data-es>Una primera conversación sin costo para validar el fit y definir el scope del engagement.</span><span data-en>A first no-cost conversation to validate fit and define engagement scope.</span></div>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <div class="step-title"><span data-es>Advisory en marcha</span><span data-en>Advisory begins</span></div>
+      <div class="step-desc"><span data-es>Engagement personalizado: sesiones, revisión de documentos, acompañamiento estratégico.</span><span data-en>Personalized engagement: sessions, document review, strategic accompaniment.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div>
+    <div class="section-tag"><span data-es>Contacto</span><span data-en>Contact</span></div>
+    <h2 class="section-title">
+      <span data-es>Empieza hoy</span>
+      <span data-en>Start today</span>
+    </h2>
+    <p class="section-body">
+      <span data-es>Cuéntanos tu desafío y te conectamos con el asesor Zoo correcto para tu empresa.</span>
+      <span data-en>Tell us your challenge and we'll connect you with the right Zoo advisor for your company.</span>
+    </p>
+    <br><br>
+    <p class="section-body" style="font-size:0.8rem;">
+      <span data-es>📍 Iberoamérica — España, Portugal, México, Chile, Colombia, Argentina y más<br><br>✉️ zoo@cbaboard.org</span>
+      <span data-en>📍 Ibero-America — Spain, Portugal, Mexico, Chile, Colombia, Argentina and more<br><br>✉️ zoo@cbaboard.org</span>
+    </p>
+  </div>
+
+  <div>
+    <div class="contact-form">
+      <div class="form-group">
+        <label class="form-label"><span data-es>Nombre completo</span><span data-en>Full name</span></label>
+        <input type="text" class="form-input" />
+      </div>
+      <div class="form-group">
+        <label class="form-label"><span data-es>Empresa</span><span data-en>Company</span></label>
+        <input type="text" class="form-input" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-input" />
+      </div>
+      <div class="form-group">
+        <label class="form-label"><span data-es>Área de advisory</span><span data-en>Advisory area</span></label>
+        <select class="form-select form-input">
+          <option value="" disabled selected><span data-es>Selecciona</span><span data-en>Select</span></option>
+          <option data-es data-en>Estrategia Empresarial / Business Strategy</option>
+          <option>Finanzas y M&A / Finance & M&A</option>
+          <option>Marketing y Crecimiento / Marketing & Growth</option>
+          <option>Tecnología e Innovación / Technology & Innovation</option>
+          <option>Recursos Humanos / HR & Leadership</option>
+          <option>Internacionalización / Internationalization</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label"><span data-es>Cuéntanos tu desafío</span><span data-en>Tell us your challenge</span></label>
+        <textarea class="form-textarea form-input"></textarea>
+      </div>
+      <button class="btn-primary" style="width:100%; text-align:center;">
+        <span data-es>Enviar solicitud</span>
+        <span data-en>Submit request</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Zoo <span>·</span> CBA Board</div>
+  <div class="footer-copy">© 2026 CBA Board. <span data-es>Todos los derechos reservados.</span><span data-en>All rights reserved.</span></div>
+</footer>
+
+<script>
+  // Nav scroll
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // Lang toggle
+  function setLang(lang) {
+    document.documentElement.setAttribute('data-lang', lang);
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.textContent.toLowerCase() === lang);
+    });
+  }
+
+  // Intersection observer for fade-in
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.area-card, .member-card, .step').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
